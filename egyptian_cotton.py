@@ -5,8 +5,6 @@ from random import random
 
 print_lock = threading.Lock()
 
-verbose = True
-
 
 def ts_print(*args, **kwargs):
     """Thread-safe print"""
@@ -14,23 +12,26 @@ def ts_print(*args, **kwargs):
         print(*args, **kwargs)
 
 
+range_max = 50
+thread_count = 100
 ranges = [
-    #[10, 20],[1, 5],[70, 80],[27, 92],[0, 16]
+    # comment the line out below and `ranges` will fill with `thread_count` random ranges
+    [10, 20], [1, 5], [70, 80], [27, 92], [0, 16]
 ]
 
 
 def make_ranges(n_ranges):
-    _max = 50000
+    if len(ranges):
+        return
 
     for new_range in range(n_ranges):
-        h = floor(random() * _max)
-        k = floor(random() * _max)
+        h = floor(random() * range_max)
+        k = floor(random() * range_max)
         new_range = [min(h, k), max(h, k)]
         ranges.append(new_range)
 
 
-if not len(ranges):
-    make_ranges(100000)
+make_ranges(thread_count)
 
 
 n_threads = len(ranges)
@@ -67,8 +68,8 @@ def sum_range(thread_name: str, range_parameter: range, result_index: int):
     elapsed_time_qsum += dt_qsum
     elapsed_time_sum += dt_sum
 
-    ts_print(f"{thread_name}:\tSum'd range [{start},{stop - 1}]\t->\tr[i]:\t{result[result_index]}\n"
-             f"\t\tqsum:\t({dt_qsum:.3}s)\t\tsum:\t({dt_sum:.3}s)")
+    # ts_print(f"{thread_name}:\tSum'd range [{start},{stop - 1}]\t->\tr[i]:\t{result[result_index]}\n"
+    #          f"\t\tqsum:\t({dt_qsum:.3}s)\t\tsum:\t({dt_sum:.3}s)")
 
 
 for i in range(n_threads):
@@ -84,6 +85,9 @@ for thread in threads:
 
 result_sum = sum(result)
 
-print(f"\n------------------------------------------------------------\n"
-      f"Et viola: {n_threads:.3} threads worked out {result_sum:.3}\n"
-      f"\t\tqsum:\t{elapsed_time_qsum:.3}s,\tsum:\t{elapsed_time_sum:.3}s")
+# print(f"\n------------------------------------------------------------\n"
+#      f"Et viola: {n_threads} threads worked out {result_sum:.3f}\n"
+#      f"\t\tqsum:\t{elapsed_time_qsum:.3}s,\tsum:\t{elapsed_time_sum:.3}s")
+
+print(result)
+print(result_sum)
